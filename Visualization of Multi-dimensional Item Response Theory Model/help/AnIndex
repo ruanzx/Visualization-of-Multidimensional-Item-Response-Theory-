@@ -1,0 +1,16 @@
+MIRTG-package	MIRTG-package
+Angle	Angle
+centroid.plot	centroid.plot
+clamshell.plot	clamshell.plot
+contour.plot	contour.plot
+correlation.plot	correlation.plot
+difsurface.2D	difsurface.2D
+difsurface.3D	difsurface.3D
+direction.plot	direction.plot
+inf.2D	inf.2D
+inf.3D	inf.3D
+MIRT	MIRT
+MIRTG	MIRTG-package
+surface.2D	surface.2D
+surface.3D	surface.3D
+vector.plot	vector.plot

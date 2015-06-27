@@ -1,0 +1,99 @@
+<html><head><title>Function to plot the information surface in a three-dimensional grid</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>inf.3D(MIRTG)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   inf.3D">
+<param name="keyword" value=" Function to plot the information surface in a three-dimensional grid">
+</object>
+
+
+<h2>Function to plot the information surface in a three-dimensional grid</h2>
+
+
+<h3>Description</h3>
+
+<p>
+The function produces a three dimensional plot of the information surface at any user specified level of angular direction for the theta1, theta2 composite.
+The plot allows for free rotation by clicking and dragging in the plot space.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+inf.3D(alpha, a1, a2, d, correlation = 0)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+The direction of information (the angle between the theta 1 and information). This value reflects the angular direction of the theta1, theta2 composite.
+This value can take on a range from 0 to 90 degrees relative to pi (see example below). </td></tr>
+<tr valign="top"><td><code>a1</code></td>
+<td>
+A vector of the item discrimination parameters for theta1 </td></tr>
+<tr valign="top"><td><code>a2</code></td>
+<td>
+A vector of the item discrimination parameters for theta2  </td></tr>
+<tr valign="top"><td><code>d</code></td>
+<td>
+A vector of the item difficulty parameters </td></tr>
+<tr valign="top"><td><code>correlation</code></td>
+<td>
+The correlation between theta 1 and theta 2. If the correlation is not equal to zero, the a1 and a2 will be transformed to maintain the orthogonal representation of the x and y axes. </td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+The information surface function is based on the "rgl" package; the user must load that package to use the function. 
+The x-axis represents theta1, the y-axis represents theta2, and the z-axis represents the value of the amount of information.
+These plots are directly related to the clamshell plots, and are simply an alternative way to visualize the information available in the test/item. 
+"There is an information surface for each composite direction from 0 degrees to 90 degrees. The height of the surface, 
+indicating the amount of information, at each of the 81 grid points for a 30 degree composite direction, for example, would be equal to the value indicated 
+by the length of the vector in the 30 degree direction in the clamshell plot, at each trait level (Ackerman, 1994, p. 266)."
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Zhan Shu, Terry Ackerman, Matthew Burke
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Ackerman,T.(1996),Graphical Representation of Multidimensional Item Response Theory Analyses,Applied Psychological Measurement,20(4),311-329.
+Reckase.M, McKinley.R,(1991), The Discriminating Power of Items That Measure More Than One Dimension, Applied Psychological Measurement,15(4),361-373.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="inf.2D.html">inf.2D</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+a1&lt;-c(0.48,1.16,1.48,0.44,0.36,1.78,0.64,1.10,0.76,0.52,0.83,0.88,0.34,0.74,0.66)
+a2&lt;-c( 0.54,0.35,0.44,1.72,0.69,0.47,1.21,1.74,0.89,0.53,0.41,0.98,0.59,0.59,0.70)
+d&lt;-c( -1.11,0.29,1.51,-0.82,-1.89,-0.49,1.35,0.82,-0.21,-0.04,-0.68,0.22,-0.86,-1.33,1.21)
+inf.3D(pi/3, a1, a2, d)
+</pre>
+
+
+
+<hr><div align="center">[Package <em>MIRTG</em> version 1.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

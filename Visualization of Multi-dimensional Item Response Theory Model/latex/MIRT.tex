@@ -1,0 +1,31 @@
+\HeaderA{MIRT}{Function to calculate the examines' positive response probability}{MIRT}
+\keyword{MIRT}{MIRT}
+\keyword{Model}{MIRT}
+\begin{Description}\relax
+The function performs to calculate postitive response probability based on the two dimensional compensatory IRT model.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+MIRT(theta1, theta2, a1, a2, d)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{theta1}] The first dimension of examines' ability 
+\item[\code{theta2}] The second dimension of examines' ability 
+\item[\code{a1}] The item discrimation parameters of theta 1 
+\item[\code{a2}] The item discrimation parameters of theta 2 
+\item[\code{d}] The item difficulty parameters 
+\end{ldescription}
+\end{Arguments}
+\begin{Value}
+The function performs to provide a matrix of probability with items at the column and examines at the row.
+\end{Value}
+\begin{Author}\relax
+Zhan Shu, Terry Ackerman
+\end{Author}
+\begin{References}\relax
+Ackerman,T.(1996),Graphical Representation of Multidimensional Item Response Theory Analyses,Applied Psychological Measurement,20(4),311-329.\\
+Reckase.M, McKinley.R,(1991), The Discriminating Power of Items That Measure More Than One Dimension, Applied Psychological Measurement,15(4),361-373.
+\end{References}
+

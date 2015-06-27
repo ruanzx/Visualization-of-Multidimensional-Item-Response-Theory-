@@ -1,0 +1,89 @@
+Entry: Angle
+Aliases: Angle
+Keywords: MIRT Graph
+Description: Function to plot the angle
+URL: ../../../library/MIRTG/html/Angle.html
+
+Entry: MIRT
+Aliases: MIRT
+Keywords: MIRT Model
+Description: Function to calculate the examines' positive response probability
+URL: ../../../library/MIRTG/html/MIRT.html
+
+Entry: MIRTG-package
+Aliases: MIRTG-package MIRTG
+Keywords: Package
+Description: Two-dimensional compensatory IRT model graphing package
+URL: ../../../library/MIRTG/html/MIRTG-package.html
+
+Entry: centroid.plot
+Aliases: centroid.plot
+Keywords: MIRT Centroid
+Description: Function to draw centroid plot
+URL: ../../../library/MIRTG/html/centroid.plot.html
+
+Entry: clamshell.plot
+Aliases: clamshell.plot
+Keywords: MIRT clamshell
+Description: Function to draw the clamshell plot
+URL: ../../../library/MIRTG/html/clamshell.plot.html
+
+Entry: contour.plot
+Aliases: contour.plot
+Keywords: MIRT Contour
+Description: Function to draw the contour plot
+URL: ../../../library/MIRTG/html/contour.plot.html
+
+Entry: correlation.plot
+Aliases: correlation.plot
+Keywords: MIRT correlation
+Description: Function to show the direction at which the composite thetas have the largest correlation with the total score
+URL: ../../../library/MIRTG/html/correlation.plot.html
+
+Entry: difsurface.2D
+Aliases: difsurface.2D
+Keywords: MIRT Surface difference
+Description: Function to plot two-dimensional difference surface
+URL: ../../../library/MIRTG/html/difsurface.2D.html
+
+Entry: difsurface.3D
+Aliases: difsurface.3D
+Keywords: MIRT Surface difference
+Description: Function to plot the three-dimensional score difference surface
+URL: ../../../library/MIRTG/html/difsurface.3D.html
+
+Entry: direction.plot
+Aliases: direction.plot
+Keywords: MIRT Direction
+Description: Function to show the direction with maximum informatoin
+URL: ../../../library/MIRTG/html/direction.plot.html
+
+Entry: inf.2D
+Aliases: inf.2D
+Keywords: MIRT inforamtion
+Description: Function to plot information surface in two-dimensional style
+URL: ../../../library/MIRTG/html/inf.2D.html
+
+Entry: inf.3D
+Aliases: inf.3D
+Keywords: MIRT information
+Description: Function to plot the infromation surface in three-dimensional style
+URL: ../../../library/MIRTG/html/inf.3D.html
+
+Entry: surface.2D
+Aliases: surface.2D
+Keywords: MIRT Surface
+Description: Function to draw the item/test surface plot
+URL: ../../../library/MIRTG/html/surface.2D.html
+
+Entry: surface.3D
+Aliases: surface.3D
+Keywords: MIRT three-dimension surface
+Description: Function to plot the item/test surface in three-dimensional style
+URL: ../../../library/MIRTG/html/surface.3D.html
+
+Entry: vector.plot
+Aliases: vector.plot
+Keywords: MIRT Vector
+Description: Function to draw vectors to represent the items
+URL: ../../../library/MIRTG/html/vector.plot.html

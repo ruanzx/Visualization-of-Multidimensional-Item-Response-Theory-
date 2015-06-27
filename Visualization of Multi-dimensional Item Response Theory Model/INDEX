@@ -1,0 +1,25 @@
+Angle                   Function to plot the angle
+MIRT                    Function to calculate the examines' positive
+                        response probability
+MIRTG-package           Two-dimensional compensatory IRT model graphing
+                        package
+centroid.plot           Function to draw centroid plot
+clamshell.plot          Function to draw the clamshell plot
+contour.plot            Function to draw the contour plot
+correlation.plot        Function to show the direction at which the
+                        composite thetas have the largest correlation
+                        with the total score
+difsurface.2D           Function to plot two-dimensional difference
+                        surface
+difsurface.3D           Function to plot the three-dimensional score
+                        difference surface
+direction.plot          Function to show the direction with maximum
+                        informatoin
+inf.2D                  Function to plot information surface in
+                        two-dimensional style
+inf.3D                  Function to plot the infromation surface in
+                        three-dimensional style
+surface.2D              Function to draw the item/test surface plot
+surface.3D              Function to plot the item/test surface in
+                        three-dimensional style
+vector.plot             Function to draw vectors to represent the items

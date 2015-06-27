@@ -1,0 +1,43 @@
+MIRT                  package:MIRTG                  R Documentation
+
+_F_u_n_c_t_i_o_n _t_o _c_a_l_c_u_l_a_t_e _t_h_e _e_x_a_m_i_n_e_s' _p_o_s_i_t_i_v_e _r_e_s_p_o_n_s_e _p_r_o_b_a_b_i_l_i_t_y
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The function performs to calculate postitive response probability
+     based on the two dimensional compensatory IRT model.
+
+_U_s_a_g_e:
+
+     MIRT(theta1, theta2, a1, a2, d)
+
+_A_r_g_u_m_e_n_t_s:
+
+  theta1: The first dimension of examines' ability 
+
+  theta2: The second dimension of examines' ability 
+
+      a1: The item discrimation parameters of theta 1 
+
+      a2: The item discrimation parameters of theta 2 
+
+       d: The item difficulty parameters 
+
+_V_a_l_u_e:
+
+     The function performs to provide a matrix of probability with
+     items at the column and examines at the row.
+
+_A_u_t_h_o_r(_s):
+
+     Zhan Shu, Terry Ackerman
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Ackerman,T.(1996),Graphical Representation of Multidimensional
+     Item Response Theory Analyses,Applied Psychological
+     Measurement,20(4),311-329.
+      Reckase.M, McKinley.R,(1991), The Discriminating Power of Items
+     That Measure More Than One Dimension, Applied Psychological
+     Measurement,15(4),361-373.
+

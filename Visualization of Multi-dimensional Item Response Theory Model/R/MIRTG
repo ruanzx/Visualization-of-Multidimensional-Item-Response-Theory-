@@ -1,0 +1,548 @@
+.packageName <- "MIRTG"
+`Angle` <-
+function(a1,a2,d,correlation=0){
+
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+
+N=30*length(a1)^2
+if(correlation==1 | correlation==-1){stop("This function does not suport unidmensional case.")}
+theta<-mvrnorm(N,mu=c(0,0),Sigma=matrix(c(1,correlation,correlation,1),ncol=2))
+t1<-theta[,1]
+t2<-theta[,2]
+
+MIRT<-function(theta1,theta2,a1,a2,d){
+p<-matrix(NA,nrow=length(theta1),ncol=length(a1))
+for(i in 1:length(a1)){
+p[,i]<-1/(1+exp((-1.7*(a1[i]*theta1+a2[i]*theta2+d[i]))))}
+p}
+
+prob<-MIRT(t1,t2,a1,a2,d)
+X<-ifelse(matrix(runif(N*length(a1),0,1),ncol=length(a1))<prob,1,0)
+s<-round(apply(X,1,sum))
+flag<-unique(s)
+alpha<-seq(0,pi/2,length=90)
+angle1<-rep(NA,length(flag))
+
+for(i in 1:length(flag)){
+theta1<-t1[flag[i]==s]
+theta2<-t2[flag[i]==s]
+prob1<-prob[flag[i]==s,]
+an<-rep(NA,length(theta1))
+for(k in 1:length(theta1)){
+I=0
+for(j in 1:length(a1)){
+a.1<-a1[j]
+a.2<-a2[j]
+d.1<-d[j]
+tem<-prob1[k,j]*(1-prob[k,j])*(a.1*cos(alpha)+a.2*sin(alpha))^2
+I=I+tem}
+id<-rep(NA,90)
+for(f in 1:90){
+id[f]<-ifelse(I[f]==max(I),f,0)}
+an[k]<-mean(alpha[id])}
+angle1[i]<-mean(an)}
+ang<-angle1/pi*180
+plot(flag,ang,xlab="Expected Score",ylab="Angle",main="Angle of Average Maximum Information for Each Possible ENC")
+text(flag,ang,round(ang,2))
+
+}
+
+`MIRT` <-
+function(theta1,theta2,a1,a2,d){
+p<-matrix(NA,nrow=length(theta1),ncol=length(a1))
+for(i in 1:length(a1)){
+p[,i]<-1/(1+exp((-1.7*(a1[i]*theta1+a2[i]*theta2+d[i]))))
+}
+p
+}
+
+`centroid.plot` <-
+function(a1,a2,d,theta1,theta2,score,correlation=0,condition=TRUE,filename="NA",type="jpeg"){
+require(MASS)
+if(correlation==1 | correlation==-1){stop("This function does not suport unidmensional case.")}
+if(!missing(score)){N=length(score)} else{N=2500}
+if(missing(theta1)& missing(theta2)){
+ warning("The abilities with two dimensions will be simulated based on the Multivariate normal distribution with the specified correlation")
+ theta<-mvrnorm(N,mu=c(0,0),Sigma=matrix(c(1,correlation,correlation,1),ncol=2))
+                            theta1<-theta[,1]
+                            theta2<-theta[,2]}
+if(!missing(score)){
+  if(!length(score)==length(theta1)){
+stop("The Number of examines within ability vector does not match that within Score vector")}}
+if(missing(score)){
+     if(missing(a1)){stop("a1 is missing")}
+     if(missing(a2)){stop("a2 is missing")}
+MIRT<-function(theta1,theta2,a1,a2,d){
+p<-matrix(NA,nrow=length(theta1),ncol=length(a1))
+for(i in 1:length(a1)){
+p[,i]<-1/(1+exp((-1.7*(a1[i]*theta1+a2[i]*theta2+d[i]))))}
+p}
+prob<-MIRT(theta1,theta2,a1,a2,d)
+score<-round(apply(prob,1,sum))}
+
+flag<-unique(score)
+mix<-cbind(theta1,theta2,score)
+plot(0,0,xlim=c(-2.5,2.5),ylim=c(-5,5),xlab="",ylab="",main="Centroid Plot",axes=FALSE)
+axis(2,pos=c(0,0),at=c(-4:4))
+axis(1,pos=c(0,0),at=c(-2:2))
+arrows(-2.15,0,2.15,0,length=0.2,angle=20)
+arrows(0,-4,0,4,length=0.2,angle=20)
+text(c(2.25,-0.15),c(-0.5,4.5),c("成1","成2"))
+
+t<-seq(-pi,pi,length=20)
+for(i in  1:length(flag)){
+temp<-apply(mix[mix[,3]==flag[i],],2,mean)
+points(temp[1],temp[2],col=i,pch=19)
+if(condition==TRUE){
+variance<-apply(mix[mix[,3]==flag[i],],2,var)
+lines(temp[1]+variance[1]*cos(t),temp[2]+variance[2]*sin(t),col=i)}
+text(temp[1]-0.1,temp[2]-0.1,temp[3],col=i)}
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)}}
+
+`clamshell.plot` <-
+function(a1,a2,d,correlation=0,alpha=c(0,pi/18,pi/9,pi/6,pi/4.5,pi/3.6,pi/3,pi/2.57,pi/2.25,pi/2),scale=0.01,filename="NA",type="jpeg"){
+theta1<-seq(-4,4,length=9)
+theta2<-theta1
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+F<-function(theta1,theta2,a1,a2,d){1/(1+exp(-1.7*(a1*theta1+a2*theta2+d)))}
+plot(theta1,theta2,xlim=range(-5,5),ylim=range(-5,5),pch=NA,main="Clamshell",xlab="成1",ylab="成2")
+for(i in 1:length(theta1)){
+   for(j in 1:length(theta2)){
+      points(theta1[i],theta2[j],type="o",pch=19)
+      inf=0 
+      for(k in 1:length(a1)){ 
+      temp<-F(theta1[i],theta2[j],a1[k],a2[k],d[k])
+      tem<-temp*(1-temp)*(a1[k]*cos(alpha)+a2[k]*sin(alpha))^2
+      inf=inf+tem}
+      inf=inf*scale
+      points(theta1[i]+inf*cos(alpha),theta2[j]+inf*sin(alpha),pch=NA)
+      suppressWarnings(arrows(theta1[i],theta2[j],theta1[i]+inf*cos(alpha),theta2[j]+inf*sin(alpha),length=0.05,angle=15))
+}}
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)}
+}
+
+`contour.plot` <-
+function(a1,a2,d,correlation=0,level=c(1:length(a1)),vector=FALSE,filename="NA",type="jpeg"){
+theta1<-seq(-3,3,length=50)
+theta2<-theta1
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+F<-function(theta1,theta2){1/(1+exp(-1.7*(a.1*theta1+a.2*theta2+d.1)))}
+z<-matrix(rep(0,50*50),,ncol=50)
+for(i in 1:length(a1)){
+a.1<-a1[i]
+a.2<-a2[i]
+d.1<-d[i]
+temp<-outer(theta1,theta2,F)
+z<-z+temp
+}
+if(length(a1)==1){name=c("Item Contour")} 
+     else{name=c("Test Contour")}
+contour(theta1,theta2,z,levels=level,xlab="成1",ylab="成2",main=name,axes=FALSE)
+axis(2,pos=c(-3,3),at=c(-3:3))
+axis(1,pos=c(-3,3),at=c(-3:3))
+lines(c(-3,3),c(0,0),col=2)
+lines(c(0,0),c(-3,3),col=2)
+if(length(a1)>1){text(-2,-1.8,c("Item Parameters:"),cex=0.8,col=2)
+                 text(-2,-2,paste("Number of Items:",length(a1)),cex=0.8,col=2)
+                 text(-2,-2.2,paste("Mean of d:",round(mean(d),3)),cex=0.8,col=2)
+                 text(-2,-2.4,paste("Mean of a1:",round(mean(a1),3)),cex=0.8,col=2)
+                 text(-2,-2.6,paste("Mean of a2:",round(mean(a2),3)),cex=0.8,col=2)}
+if(length(a1)==1){
+text(-2,-2,c("Item Parameters:"),cex=0.8,col=2)
+text(-2,-2.2,paste("a1:",round(a1,3)),cex=0.8,col=2)
+text(-2,-2.4,paste("a2:",round(a2,3)),cex=0.8,col=2)
+if(vector){
+MDISC<-sqrt(a1^2+a2^2)
+D<-(-d/MDISC)
+x<-c(D*a1/MDISC,(D+MDISC)*a1/MDISC)
+y<-c(D*a2/MDISC,(D+MDISC)*a2/MDISC)
+arrows(x[1:(length(x)/2)], y[1:(length(x)/2)], 
+x[(length(x)/2+1):length(x)], y[(length(x)/2+1):length(x)],pch=0,length=0.1,col=2,angle=20)
+}}
+if(vector==TRUE & length(a1)>1){
+ warning("The Vector command is only for the item contour plot,not for test contour plot")}
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)}
+}
+
+`correlation.plot` <-
+function(a1,a2,d,theta1,theta2,score,correlation=0,filename="NA",type="jpeg"){
+  require(MASS)
+if(correlation==1 | correlation==-1){stop("This function does not suport unidmensional case.")}
+if(!missing(score)){N=length(score)} else{N=2500}
+if(missing(theta1)& missing(theta2)){warnings("The abilities with two dimensions will be simulated based on 
+   the Multivariate normal distribution following the specified correlation")
+              theta<-mvrnorm(N,mu=c(0,0),Sigma=matrix(c(1,correlation,correlation,1),ncol=2))
+              theta1<-theta[,1]
+              theta2<-theta[,2]}
+if(!missing(score)){
+  if(!length(score)==length(theta1)){  
+stop("The Number of examines within ability vector does not match that within Score vector")}}
+if(missing(score)){
+     if(missing(a1)){stop("a1 is missing")}
+     if(missing(a2)){stop("a2 is missing")}
+MIRT<-function(theta1,theta2,a1,a2,d){
+p<-matrix(NA,nrow=length(theta1),ncol=length(a1))
+for(i in 1:length(a1)){
+p[,i]<-1/(1+exp((-1.7*(a1[i]*theta1+a2[i]*theta2+d[i]))))}
+p}
+prob<-MIRT(theta1,theta2,a1,a2,d)
+score<-round(apply(prob,1,sum))}
+
+plot(0,0,pch="",xlim=range(-1.5:1.5),ylim=range(-1.5:1.5),xlab="",ylab="",
+  main="The Angular Compositie",axes=FALSE)
+arrows(-1.5,0,1.5,0,length=0.2,angle=20)
+arrows(0,-1.5,0,1.5,length=0.2,angle=20) 
+lines(c(-1,1),c(-1,1))
+lines(c(1,-1),c(-1,1))
+text(c(1.5,-0.1),c(-0.1,1.5),c("成1","成2"))
+alpha<-seq(0,pi/2,length=90)
+   angle<-function(temp){
+   correlation<-rep(NA,90)
+   for(i in 1:length(alpha)){
+   theta<-cos(alpha[i])*temp[,1]+sin(alpha[i])*temp[,2]
+   correlation[i]<-cor(theta,temp[,3])
+   }
+    temp1<-c(rep(0,90))
+    for(j in 1:90){
+    temp1[j]<-ifelse(correlation[j]==max(correlation),j,0)
+    }
+    ang<-mean(round(alpha[temp1]*180/pi,2))
+    output<-list(ang=ang,corr=max(correlation))
+    }
+grand<-cbind(theta1,theta2,score)
+temp1<-grand[theta1>=0&theta2>=0&theta1>=theta2,]
+temp2<-grand[theta1>=0&theta2>=0&theta1<=theta2,]
+temp3<-grand[theta1<=0&theta2>=0&abs(theta1)<=theta2,]
+temp4<-grand[theta1<=0&theta2>=0&abs(theta1)>=theta2,]
+temp5<-grand[theta1<=0&theta2<=0&abs(theta1)>=abs(theta2),]
+temp6<-grand[theta1<=0&theta2<=0&abs(theta1)<=abs(theta2),]
+temp7<-grand[theta1>=0&theta2<=0&abs(theta1)<=abs(theta2),]
+temp8<-grand[theta1>=0&theta2<=0&abs(theta1)>=abs(theta2),]
+temp<-list(temp1,temp2,temp3,temp4,temp5,temp6,temp7,temp8)
+tem<-matrix(NA,ncol=2,nrow=8)
+x<-c(0.5,0.25,-0.25,-0.5,-0.5,-0.25,0.25,0.5)
+y<-c(0.25,0.5,0.5,0.25,-0.25,-0.5,-0.5,-0.25)
+for(i in 1:8){
+temper<-angle(temp[[i]])
+tem[i,1]<-temper[[1]]
+tem[i,2]<-temper[[2]]}
+size<-tem[,1]/max(tem)
+size<-ifelse(size<0.5,0.5,size)
+text(x,y,tem[,1],cex=size)
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)}
+}
+
+`difsurface.2D` <-
+function(a1.1,a2.1,a1.2,a2.2,d1,d2,correlation=0,azimuthal_angle=0,colatitude_angle=15,filename="NA",type="jpeg"){
+theta1<-seq(-3,3,length=50)
+theta2<-theta1
+
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1.1+y2*a2.1
+a2t=y2*a1.1+y1*a2.1
+a1.1<-a1t
+a2.1<-a2t
+a1t=y1*a1.2+y2*a2.2
+a2t=y2*a1.2+y1*a2.2
+a1.2<-a1t
+a2.2<-a2t
+
+F<-function(theta1,theta2){1/(1+exp(-1.7*(a1*theta1+a2*theta2+d)))}
+z1<-matrix(rep(0,50*50),,ncol=50)
+for(i in 1:length(a1.1)){
+a1<-a1.1[i]
+a2<-a2.1[i]
+d<-d1[i]
+temp<-outer(theta1,theta2,F)
+z1<-z1+temp
+}
+z2<-matrix(rep(0,50*50),ncol=50)
+for(i in 1:length(a1.2)){
+a1<-a1.2[i]
+a2<-a2.2[i]
+d<-d2[i]
+temp<-outer(theta1,theta2,F)
+z2<-z2+temp
+}
+z=z1-z2
+persp(theta1,theta2,z,zlim=range(0,max(abs(z))+0.01),theta=azimuthal_angle,phi=colatitude_angle, 
+expand = 0.1,ltheta=120,shade=0.2,col="lightgray",xlab="成1",ylab="成2",
+zlab="Score Differece",main="Difference Surface: Test1-Test2")
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)
+}
+}
+
+`difsurface.3D` <-
+function(a1.1,a2.1,a1.2,a2.2,d1,d2,correlation=0){
+require(rgl)
+theta1<-seq(-4,4,length=40)
+theta2<-theta1
+
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1.1+y2*a2.1
+a2t=y2*a1.1+y1*a2.1
+a1.1<-a1t
+a2.1<a2t
+a1t=y1*a1.2+y2*a2.2
+a2t=y2*a1.2+y1*a2.2
+a1.2<-a1t
+a2.2<a2t
+
+F<-function(theta1,theta2){1/(1+exp(-1.7*(a1*theta1+a2*theta2+d)))}
+z1<-matrix(rep(0,40*40),ncol=40)
+for(i in 1:length(a1.1)){
+a1<-a1.1[i]
+a2<-a2.1[i]
+d<-d1[i]
+temp<-outer(theta1,theta2,F)
+z1<-z1+temp
+}
+z2<-matrix(rep(0,40*40),ncol=40)
+for(i in 1:length(a1.2)){
+a1<-a1.2[i]
+a2<-a2.2[i]
+d<-d2[i]
+temp<-outer(theta1,theta2,F)
+z2<-z2+temp
+}
+z=z1-z2
+tt<-round(range(z*10))
+ncol<-tt[2]-tt[1]+1
+colcut<-rainbow(ncol,s=0.8,v=0.9)
+colr<-colcut[round(z*10)-tt[1]+1]
+require(rgl)
+persp3d(theta1,theta2,z,color=colr,zlab="Score Difference",box=FALSE,main="Difference Surface: Test1-Test2")
+aspect3d(x=1,y=1,z=0.75)
+}
+
+`direction.plot` <-
+function(a1,a2,d,correlation=0,filename="NA",type="jpeg"){
+theta1<-seq(-4,4,length=9)
+theta2<-theta1
+alpha<-seq(0,pi/2,length=90)
+
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+
+F<-function(theta1,theta2,a1,a2,d){1/(1+exp(-1.7*(a1*theta1+a2*theta2+d)))}
+plot(theta1,theta2,xlim=range(-4.5,4.5),xlab="成1",ylab="成2")
+degree<-matrix(NA,ncol=9,nrow=9)
+minf<-matrix(NA,ncol=9,nrow=9)
+for(i in 1:length(theta1)){
+   for(j in 1:length(theta2)){
+    points(theta1[i],theta2[j],type="o",pch=19)
+    inf=c(rep(0,90))
+    for(f in 1:length(a1)){    
+     temp<-F(theta1[i],theta2[j],a1[f],a2[f],d[f])
+     tem<-temp*(1-temp)*(a1[f]*cos(alpha)+a2[f]*sin(alpha))^2
+    inf=inf+tem
+    }
+    temp<-c(rep(0,90))
+    for(k in 1:90){
+    temp[k]<-ifelse(inf[k]==max(inf),k,0)
+    }
+    minf[i,j]<-max(inf)
+    degree[i,j]<-mean(round(alpha[temp]*180/pi,2)) }}
+for(i in 1:length(theta1)){
+   for(j in 1:length(theta2)){
+size<-minf[i,j]/max(minf)
+size<-ifelse(size<0.5,0.5,size)
+text(theta1[i]+0.1,theta2[j]-0.1,degree[i,j],cex=size)
+}}
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)}
+}
+
+`inf.2D` <-
+function(alpha,a1,a2,d,correlation=0,azimuthal_angle=0,colatitude_angle=15,filename="NA",type="jpeg"){
+theta1<-seq(-4,4,length=30)
+theta2<-theta1
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+F<-function(theta1,theta2){1/(1+exp(-t((a.1*theta1+a.2*theta2+d.1))))}
+I=matrix(0,ncol=length(theta1),nrow=length(theta2))
+for(i in 1:length(a1)){
+a.1<-a1[i]
+a.2<-a2[i]
+d.1<-d[i]
+temp<-outer(theta1,theta2,F)
+tem=temp*(1-temp)*(a.1*cos(alpha)+a.2*sin(alpha))^2
+I=I+tem
+}
+persp(theta1, theta2,I, zlim=range(0,max(I)),theta=azimuthal_angle,phi=colatitude_angle, 
+expand = 0.1,ltheta = 120, shade = 0.2, col = "lightgray",xlab="成1",ylab="成2",
+zlab="Information",main="Information Surface")
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)}
+}
+
+`inf.3D` <-
+function(alpha,a1,a2,d,correlation=0){
+require(rgl)
+theta1<-seq(-4,4,length=45)
+theta2<-theta1
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+F<-function(theta1,theta2){1/(1+exp(-t((a.1*theta1+a.2*theta2+d.1))))}
+I=matrix(0,ncol=length(theta1),nrow=length(theta2))
+for(i in 1:length(a1)){
+a.1<-a1[i]
+a.2<-a2[i]
+d.1<-d[i]
+temp<-outer(theta1,theta2,F)
+tem=temp*(1-temp)*(a.1*cos(alpha)+a.2*sin(alpha))^2
+I=I+tem
+}
+require(rgl)
+tt<-round(range(I))
+ncol<-tt[2]-tt[1]+1
+colcut<-rainbow(ncol,s=0.8,v=0.9)
+colr<-colcut[round(I)-tt[1]+1]
+persp3d(theta1,theta2,I,color=colr,zlab="Information",main="Information Surface",box=FALSE)
+aspect3d(x=1,y=1,z=0.75)
+}
+
+`surface.2D` <-
+function(a1,a2,d,correlation=0,azimuthal_angle=0,colatitude_angle=15,filename="NA",type="jpeg"){
+theta1<-seq(-3,3,length=30)
+theta2<-theta1
+
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+
+F<-function(theta1,theta2){1/(1+exp(-1.7*(a.1*theta1+a.2*theta2+d.1)))}
+z<-matrix(rep(0,30*30),ncol=30)
+for(i in 1:length(a1)){
+a.1<-a1[i]
+a.2<-a2[i]
+d.1<-d[i]
+temp<-outer(theta1,theta2,F)
+z<-z+temp
+}
+if(length(a1)==1){name=c("Item Surface")
+                  name1=c("Probability")} 
+            else{name=c("Test Surface")
+                 name1=c("Test Score")}
+persp(theta1, theta2, z, zlim=range(0,length(a1)),theta=azimuthal_angle,phi=colatitude_angle, 
+expand = 0.1,ltheta = 120, shade = 0.2, col = "lightgray",xlab="成1",ylab="成2",
+zlab=name1,main=name)
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)
+}
+}
+
+`surface.3D` <-
+function(a1,a2,d,correlation=0){
+require(rgl)
+theta1<-seq(-4,4,length=80)
+theta2<-theta1
+
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+
+F<-function(theta1,theta2){1/(1+exp(-1.7*(a.1*theta1+a.2*theta2+d.1)))}
+z<-matrix(rep(0,80*80),,ncol=80)
+for(i in 1:length(a1)){
+a.1<-a1[i]
+a.2<-a2[i]
+d.1<-d[i]
+temp<-outer(theta1,theta2,F)
+z<-z+temp
+}
+require(rgl)
+tt<-round(range(z))
+ncol<-tt[2]-tt[1]+1
+colcut<-rainbow(ncol,s=0.8,v=0.9)
+colr<-colcut[round(z)-tt[1]+1]
+if(length(a1)==1){name=c("Item Surface")
+                  name1=c("Probability")} 
+            else{name=c("Test Surface")
+                 name1=c("Test Score")}
+persp3d(theta1,theta2,z/length(a1),col=colr,zlab=name1,axis=FALSE,box=FALSE,main=name)
+aspect3d(x=1,y=1,z=0.75)
+}
+
+`vector.plot` <-
+function(a1,a2,d,correlation=0,S_category=list(c(1:length(a1))),filename="NA",type="jpeg"){
+if(!length(a1)==length(a2)& length(a2)==length(d)){
+warning("The number of the parameters does not match.")}
+
+y1=(sqrt(1+correlation)+sqrt(1-correlation))/2
+y2=(sqrt(1+correlation)-sqrt(1-correlation))/2
+a1t=y1*a1+y2*a2
+a2t=y2*a1+y1*a2
+a1<-a1t
+a2<-a2t
+
+MDISC<-sqrt(a1^2+a2^2)
+D<-(-d/MDISC)
+x<-c(D*a1/MDISC,(D+MDISC)*a1/MDISC)
+y<-c(D*a2/MDISC,(D+MDISC)*a2/MDISC)
+temp<-round(max(max(abs(x)),max(abs(y))))
+plot(0,0,xlim=range(-temp-1,temp+1),ylim=range(-temp-1,temp+1),asp=1,main="Item Vector",xlab="",ylab="",axes=FALSE)
+axis(2,pos=c(0,0),at=c(round(-temp):round(temp)))
+axis(1,pos=c(0,0),at=c(round(-temp):round(temp)))
+arrows(-temp-1,0,temp+1,0,length=0.2,angle=20)
+arrows(0,-temp-1,0,temp+1,length=0.2,angle=20)
+text(c(11*temp/10,-temp/10),c(-temp/10,11*temp/10),c("成1","成2"))
+
+for(i in 1:length(S_category)){
+s <- S_category[[i]]
+MDISC<-sqrt(a1[s]^2+a2[s]^2)
+D<-(-d[s]/MDISC)
+x<-c(D*a1[s]/MDISC,(D+MDISC)*a1[s]/MDISC)
+y<-c(D*a2[s]/MDISC,(D+MDISC)*a2[s]/MDISC)
+
+text(x[(length(x)/2+1):length(x)]+0.05,y[((length(y)/2+1):length(y))]+0.05,
+labels=paste(S_category[[i]],sep=""),col=i,cex=0.7)
+arrows(x[1:(length(x)/2)], y[1:(length(x)/2)], 
+x[(length(x)/2+1):length(x)], y[(length(x)/2+1):length(x)],pch=0,length=0.1,col=i,angle=20)
+text(-temp/2,4*temp/5-i*temp/8,paste("CAT",i,sep=""),cex=0.8,col=i)
+}
+if(!filename=="NA"){
+savePlot(paste(filename,".",type,sep=""),type=type)
+}
+}
+
